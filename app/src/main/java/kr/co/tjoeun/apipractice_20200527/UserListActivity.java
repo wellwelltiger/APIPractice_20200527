@@ -5,6 +5,9 @@ import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +41,29 @@ public class UserListActivity extends BaseActivity {
 
     @Override
     public void setupEvents() {
+        binding.userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                final User clickedUser = users.get(position);
+                ServerUtil.postRequestUserCheck(mContext, clickedUser.getId(), new ServerUtil.JsonResponseHandler() {
+                    @Override
+                    public void onResponse(JSONObject json) {
+                        Log.d("찔러보기 응답",json.toString());
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(mContext, String.format("%s님을 찔렀습니다.",clickedUser.getNickName()), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+
+                    }
+                });
+
+            }
+        });
 
     }
 
